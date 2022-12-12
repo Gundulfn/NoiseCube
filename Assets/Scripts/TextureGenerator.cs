@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public static class TextureGenerator
 {
@@ -36,6 +37,14 @@ public static class TextureGenerator
         texture.SetPixels(colorMap);
         texture.Apply();
 
+        //Save texture as png
+        byte[] bytes = texture.EncodeToPNG();
+        var dirPath = Application.dataPath + "/../SaveImages/";
+        if(!Directory.Exists(dirPath)) {
+            Directory.CreateDirectory(dirPath);
+        }
+        File.WriteAllBytes(dirPath + "Image" + ".png", bytes);
+                
         return texture;
     }
 }
