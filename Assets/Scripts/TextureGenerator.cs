@@ -5,6 +5,8 @@ using System.IO;
 
 public static class TextureGenerator
 {
+    const string DATE_FORMAT = "dddd, dd MMMM yyyy hh.mm.ss tt";
+
     public static Texture2D GenerateTextureFromColorMap(Color[] colorMap, int width, int height)
     {
         Texture2D texture = new Texture2D(width, height);
@@ -16,7 +18,7 @@ public static class TextureGenerator
         return texture;
     }
 
-    public static Texture2D GenerateTextureFromHeightMap(HeightMap heightMap)
+    public static Texture2D GenerateTextureFromHeightMap(HeightMap heightMap, bool takeScreenShot = false)
     {
         int width = heightMap.values.GetLength(0);
         int height = heightMap.values.GetLength(1);
@@ -38,13 +40,19 @@ public static class TextureGenerator
         texture.Apply();
 
         //Save texture as png
-        byte[] bytes = texture.EncodeToPNG();
-        var dirPath = Application.dataPath + "/../SaveImages/";
-        if(!Directory.Exists(dirPath)) {
-            Directory.CreateDirectory(dirPath);
+        if (takeScreenShot)
+        {
+            byte[] bytes = texture.EncodeToPNG();
+            var dirPath = Application.dataPath + "/../SaveImages/";
+
+            if (!Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
+            }
+            
+            File.WriteAllBytes(dirPath + System.DateTime.Now.ToString(DATE_FORMAT) + ".png", bytes);
         }
-        File.WriteAllBytes(dirPath + "Image" + ".png", bytes);
-                
+
         return texture;
     }
 }

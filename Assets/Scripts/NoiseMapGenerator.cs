@@ -7,25 +7,33 @@ public static class NoiseMapGenerator
     public static float[,] GenerateNoiseMap(int mapWidth, int mapHeight, NoiseSettings settings, Vector2 sampleCenter)
     {
         float[,] noiseMap = new float[mapWidth, mapHeight];
-
         float frequency = 1;
         float amplitude = 1;
+
+        //Genlik ve süreklilik parametrelerine bağlı haritanın üretilebilecek maksimum yükseklik değeri
         float maxPossibleHeight = 1f;
 
+        //Oktav haritaların tanımlanması
         Vector2[] octaveOffsets = new Vector2[settings.octaves];
+
+        //RTD değeriyle rastgele sayılar üreten obje
         System.Random randomNumberGenerator = new System.Random(settings.seed);
 
+        //Oktav haritalarının ve "maxPossibleHeight" değerinin atanması
         for (int i = 0; i < settings.octaves; i++)
         {
-            octaveOffsets[i] = new Vector2(randomNumberGenerator.Next(-10000, 10000) + settings.offset.x + sampleCenter.x, randomNumberGenerator.Next(-10000, 10000) - settings.offset.y - sampleCenter.y);
+            octaveOffsets[i] = new Vector2(
+              randomNumberGenerator.Next(-10000, 10000) + settings.offset.x + sampleCenter.x, randomNumberGenerator.Next(-10000, 10000) - settings.offset.y - sampleCenter.y);
 
             maxPossibleHeight += amplitude;
-            amplitude *= settings.persistance;
+            amplitude *= settings.persistence;
         }
 
+        //Haritanın üretim sırasındaki maksimum ve minimum yükseklik değerlerini kaydetmek için
         float maxLocalNoiseHeight = float.MinValue;
         float minLocalNoiseHeight = float.MaxValue;
 
+        //Harita üretimi başlangıcı
         for (int x = 0; x < mapWidth; x++)
         {
             for (int y = 0; y < mapHeight; y++)
@@ -36,14 +44,16 @@ public static class NoiseMapGenerator
 
                 for (int i = 0; i < settings.octaves; i++)
                 {
-                    float sampleX = (x - mapWidth / 2f + octaveOffsets[i].x) / settings.scale * frequency;
-                    float sampleZ = (y - mapHeight / 2f + octaveOffsets[i].y) / settings.scale * frequency;
+                    //PGH'ın x ve y koordinatlarını belirleme
+                    float sampleX = (x - mapWidth + octaveOffsets[i].x) / settings.scale * frequency;
+                    float sampleY = (y - mapHeight + octaveOffsets[i].y) / settings.scale * frequency;
 
-                    float perlinValue = Mathf.PerlinNoise(sampleX, sampleZ) * 2 - 1;
+                    //[0, 1] arasında perlin gürültüsü değeri üretme
+                    float perlinValue = Mathf.PerlinNoise(sampleX, sampleY);
 
                     noiseHeight += perlinValue * amplitude;
 
-                    amplitude *= settings.persistance;
+                    amplitude *= settings.persistence;
                     frequency *= settings.lacunarity;
                 }
 
@@ -59,6 +69,7 @@ public static class NoiseMapGenerator
 
                 noiseMap[x, y] = noiseHeight;
 
+                //Normalleştirme modu "Global" seçeneği için yapılan işlem
                 if (settings.normalizeMode == NormalizeMode.Global)
                 {
                     float normalizedHeight = (noiseMap[x, y] + 1) / (maxPossibleHeight / 0.9f);
@@ -67,15 +78,17 @@ public static class NoiseMapGenerator
             }
         }
 
+        //Normalleştirme modu "Local" seçeneği için yapılan işlem
         if (settings.normalizeMode == NormalizeMode.Local)
         {
             for (int x = 0; x < mapWidth; x++)
             {
                 for (int y = 0; y < mapHeight; y++)
                 {
-                    noiseMap[x, y] = Mathf.InverseLerp(minLocalNoiseHeight, maxLocalNoiseHeight, noiseMap[x, y]);
+                    noiseMap[x, y] = Mathf.InverseLerp(minLocalNoiseHeight,
+                                                       maxLocalNoiseHeight,
+                                                       noiseMap[x, y]);
                 }
-
             }
         }
 
@@ -111,7 +124,7 @@ public class NoiseSettings
     public int octaves = 4;
 
     [Range(0, 1)]
-    public float persistance = .5f;
+    public float persistence = .5f;
     public float lacunarity = 2;
 
     public NoiseSettings() { }
@@ -120,6 +133,6 @@ public class NoiseSettings
         scale = Mathf.Max(scale, 0.01f);
         octaves = Mathf.Max(octaves, 1);
         lacunarity = Mathf.Max(lacunarity, 1);
-        persistance = Mathf.Clamp01(persistance);
+        persistence = Mathf.Clamp01(persistence);
     }
 }

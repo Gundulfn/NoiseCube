@@ -23,6 +23,7 @@ public class MapPreview : MonoBehaviour
     public int levelOfDetail;
 
     public DrawMode drawMode = DrawMode.Mesh;
+    public bool takeScreenShot = false;
 
     public void DrawMapInEditor()
     {
@@ -31,7 +32,7 @@ public class MapPreview : MonoBehaviour
 
         if (drawMode == DrawMode.NoiseMap)
         {
-            Texture2D texture = TextureGenerator.GenerateTextureFromHeightMap(heightMap);
+            Texture2D texture = TextureGenerator.GenerateTextureFromHeightMap(heightMap, takeScreenShot);
             DrawTexture(texture);
         }
         else if (drawMode == DrawMode.Mesh)
