@@ -7,7 +7,7 @@ public class HeightMapSettings : UpdatableData
     
     public bool useFalloff;
 
-    public float heightMultiplier = 1f;
+    public float heightMultiplier = 150f;
     public AnimationCurve heightCurve;
 
     public float minHeight

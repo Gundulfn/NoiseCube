@@ -18,7 +18,7 @@ public static class TextureGenerator
         return texture;
     }
 
-    public static Texture2D GenerateTextureFromHeightMap(HeightMap heightMap, bool takeScreenShot = false)
+    public static Texture2D GenerateTextureFromHeightMap(HeightMap heightMap, bool takeScreenShot = false, bool useFalloff = false)
     {
         int width = heightMap.values.GetLength(0);
         int height = heightMap.values.GetLength(1);
@@ -43,13 +43,13 @@ public static class TextureGenerator
         if (takeScreenShot)
         {
             byte[] bytes = texture.EncodeToPNG();
-            var dirPath = Application.dataPath + "/../SaveImages/";
+            var dirPath = Application.dataPath + "/../Screenshots/";
 
             if (!Directory.Exists(dirPath))
             {
                 Directory.CreateDirectory(dirPath);
             }
-            
+
             File.WriteAllBytes(dirPath + System.DateTime.Now.ToString(DATE_FORMAT) + ".png", bytes);
         }
 

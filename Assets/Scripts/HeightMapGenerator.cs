@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public static class HeightMapGenerator
 {
@@ -9,24 +7,24 @@ public static class HeightMapGenerator
         float[,] values = NoiseMapGenerator.GenerateNoiseMap(width, height, settings.noiseSettings, sampleCenter);
         
         AnimationCurve heightCurve_threadSafe = new AnimationCurve(settings.heightCurve.keys);
-
+        
         float minValue = float.MaxValue;
         float maxValue = float.MinValue;
 
         for (int x = 0; x < width; x++)
         {
-            for (int z = 0; z < height; z++)
+            for (int y = 0; y < height; y++)
             {
-                values[x, z] *= heightCurve_threadSafe.Evaluate(values[x, z]) * settings.heightMultiplier;
+                values[x, y] *= heightCurve_threadSafe.Evaluate(values[x, y]) * settings.heightMultiplier;
                 
-                if(values[x, z] > maxValue)
+                if(values[x, y] > maxValue)
                 {
-                    maxValue = values[x, z];
+                    maxValue = values[x, y];
                 }
 
-                if(values[x, z] < minValue)
+                if(values[x, y] < minValue)
                 {
-                    minValue = values[x, z];
+                    minValue = values[x, y];
                 }
             }
         }

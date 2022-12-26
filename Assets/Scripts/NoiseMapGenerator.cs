@@ -115,15 +115,15 @@ public static class NoiseMapGenerator
 [System.Serializable]
 public class NoiseSettings
 {
-    public NoiseMapGenerator.NormalizeMode normalizeMode;
+    public NoiseMapGenerator.NormalizeMode normalizeMode = NoiseMapGenerator.NormalizeMode.Global;
 
     public int seed = 1;
     public Vector2 offset = Vector2.zero;
 
-    public float scale = 30;
-    public int octaves = 4;
+    public float scale = 25;
+    public int octaves = 2;
 
-    [Range(0, 1)]
+    [Range(0.1f, 1)]
     public float persistence = .5f;
     public float lacunarity = 2;
 

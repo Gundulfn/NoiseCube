@@ -7,7 +7,7 @@ public class MapPreview : MonoBehaviour
     public Renderer textureRender;
     public MeshFilter meshFilter;
     public MeshRenderer meshRenderer;
-
+    public AnimationCurve defaultCurve;
     public enum DrawMode
     {
         NoiseMap, Mesh, FalloffMap
@@ -32,7 +32,7 @@ public class MapPreview : MonoBehaviour
 
         if (drawMode == DrawMode.NoiseMap)
         {
-            Texture2D texture = TextureGenerator.GenerateTextureFromHeightMap(heightMap, takeScreenShot);
+            Texture2D texture = TextureGenerator.GenerateTextureFromHeightMap(heightMap, takeScreenShot, heightMapSettings.useFalloff);
             DrawTexture(texture);
         }
         else if (drawMode == DrawMode.Mesh)
